@@ -15,7 +15,6 @@ import IUserInfo from "../shared/models/UserInfo";
 import googleAuthConfig from "../config/google_auth_config";
 
 import GoogleLogo from "../assets/googlelogo.svg";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { api } from "../lib/axios";
 import { useDispatch } from "react-redux";
 import setUserAction from "../redux/actions/setUserAction";

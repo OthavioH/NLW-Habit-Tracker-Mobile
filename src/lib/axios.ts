@@ -4,6 +4,8 @@ import Constants from "expo-constants";
 
 const { manifest } = Constants;
 
+const apiURL = "https://nlwhabittrackerbackend.onrender.com";
+
 export const api = axios.create({
-  baseURL: `http://192.168.15.4:3333`,
+  baseURL: apiURL,
 });

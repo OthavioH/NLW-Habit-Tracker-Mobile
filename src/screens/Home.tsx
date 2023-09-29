@@ -6,17 +6,18 @@ import { generateRangeDatesFromYearStart } from "../shared/utils/generate-range-
 import { HabitDay, DAY_SIZE } from "../components/HabitDay";
 import { Header } from "../components/Header";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Loading } from "../components/loading";
 import dayjs from "dayjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import isOddNumber from "../shared/utils/isOddNumber";
 
 const weekDays = ["D", "S", "T", "Q", "Q", "S", "S"];
 
-const datesFromYearsStart = generateRangeDatesFromYearStart();
-const minimumSummaryDatesSizes = 18 * 5;
+const datesSinceStartOfMonth = generateRangeDatesFromYearStart();
+const minimumSummaryDatesSizes = isOddNumber(dayjs().month() + 1) ? 31 : 30;
 const amountOfDaysToFill =
-  minimumSummaryDatesSizes - datesFromYearsStart.length;
+  minimumSummaryDatesSizes - datesSinceStartOfMonth.length;
 
 type SummaryProps = {
   id: string;
@@ -36,7 +37,9 @@ export function HomeScreen() {
 
       const user = await AsyncStorage.getItem("@user");
 
-      const response = await api.get(`/${JSON.parse(user!).id}/summary`);
+      const userId = JSON.parse(user ?? "").id;
+
+      const response = await api.get(`/${userId}/summary`);
       setSummary(response.data);
     } catch (error) {
       Alert.alert("Ops", "O sumário de hábitos não carregou irmão!! :/");
@@ -46,11 +49,11 @@ export function HomeScreen() {
     }
   }
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchData();
-    }, [])
-  );
+  useEffect(() => {
+    (async () => {
+      await fetchData();
+    })();
+  }, []);
 
   if (loading) {
     return <Loading />;
@@ -78,7 +81,7 @@ export function HomeScreen() {
       >
         {summary && (
           <View className="flex-row flex-wrap">
-            {datesFromYearsStart.map((date, i) => {
+            {datesSinceStartOfMonth.map((date, i) => {
               const dayWithHabits = summary.find((day) => {
                 return dayjs(date).isSame(dayjs(day.date), "day");
               });

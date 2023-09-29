@@ -51,7 +51,7 @@ export function NewHabitScreen() {
       const data = {
         title,
         weekDays,
-        user_id: JSON.parse(user!).id,
+        user_id: JSON.parse(user ?? "").id,
       };
 
       await api.post("/habits", data);
